@@ -2,7 +2,7 @@
 /*
 Plugin Name: Información de Autor y Ubicación para Elementor
 Description: Widget de Elementor para mostrar autor, foto, cargo, ubicación (prefijo + lugar) y fecha en reportajes. Incluye metabox, quick-edit y compatibilidad con Elementor.
-Version: 3.0
+Version: 2.9
 Author: Marcos para El Ambientalista Post
 */
 
