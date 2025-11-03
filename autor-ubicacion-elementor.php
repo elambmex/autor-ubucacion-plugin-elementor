@@ -2,19 +2,16 @@
 /*
 Plugin Name: Información de Autor y Ubicación para Elementor
 Description: Widget de Elementor para mostrar autor, foto, cargo, ubicación (prefijo + lugar) y fecha en reportajes. Incluye metabox, quick-edit y compatibilidad con Elementor.
-Version: 2.9
+Version: 3.0
 Author: Marcos para El Ambientalista Post
 */
-
 if (!defined('ABSPATH')) exit;
-
 // -------------------------
 // Encolar estilos frontend
 // -------------------------
 add_action('wp_enqueue_scripts', function() {
     wp_enqueue_style('arp-elementor-style', plugin_dir_url(__FILE__) . 'style.css');
 });
-
 // -------------------------
 // Registrar el widget en Elementor
 // -------------------------
@@ -35,7 +32,6 @@ add_action('elementor/elements/categories_registered', function($elements_manage
         ]
     );
 });
-
 // -------------------------
 // Metabox: Solo UN campo: prefijo + lugar
 // -------------------------
@@ -49,12 +45,10 @@ add_action('add_meta_boxes', function() {
         'default'
     );
 });
-
 function arp_autor_ubicacion_metabox($post) {
     // Prefijo guardado y lugar
     $prefijo = get_post_meta($post->ID, '_arp_ubicacion_prefijo', true);
     $lugar = get_post_meta($post->ID, '_arp_ubicacion_lugar', true);
-
     // Opciones sugeridas
     $opciones = [
         '' => '-- Ninguno --',
@@ -79,18 +73,15 @@ function arp_autor_ubicacion_metabox($post) {
         <input type="text" name="arp_ubicacion_lugar" id="arp_ubicacion_lugar" class="widefat"
                placeholder="Ej: Ciudad de México, México" value="<?php echo esc_attr($lugar); ?>">
     </p>
-
     <p style="font-size:12px;color:#666;margin-top:6px;">Si dejas ambos en blanco, no se mostrará la ubicación en el widget.</p>
     <?php
 }
-
 // -------------------------
 // Guardar metadatos
 // -------------------------
 add_action('save_post', function($post_id) {
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
     if (!current_user_can('edit_post', $post_id)) return;
-
     // Prefijo y lugar
     if (isset($_POST['arp_ubicacion_prefijo'])) {
         update_post_meta($post_id, '_arp_ubicacion_prefijo', sanitize_text_field($_POST['arp_ubicacion_prefijo']));
@@ -113,7 +104,6 @@ function arp_get_post_ubicacion($post_id = null) {
     if (!empty($lugar)) $parts[] = $lugar;
     return implode(' ', $parts); // ej: "Reportando Ciudad de México"
 }
-
 // -------------------------
 // Quick Edit: agregar columna y quick edit para ubicación
 // -------------------------
@@ -121,7 +111,6 @@ add_filter('manage_posts_columns', function($columns) {
     $columns['arp_ubicacion'] = __('Ubicación', 'arp-elementor');
     return $columns;
 });
-
 add_action('manage_posts_custom_column', function($column, $post_id) {
     if ($column === 'arp_ubicacion') {
         $prefijo = get_post_meta($post_id, '_arp_ubicacion_prefijo', true);
@@ -133,7 +122,6 @@ add_action('manage_posts_custom_column', function($column, $post_id) {
         }
     }
 }, 10, 2);
-
 // Añadir contenido al quick edit (caja invisible, estilo admin)
 add_action('quick_edit_custom_box', function($column_name, $post_type) {
     if ($column_name !== 'arp_ubicacion') return;
@@ -159,7 +147,6 @@ add_action('quick_edit_custom_box', function($column_name, $post_type) {
     </fieldset>
     <?php
 }, 10, 2);
-
 // Guardar Quick Edit (hook en save_post ya captura cambios de quick edit si hay datos)
 // Para interceptar desde la lista necesitamos usar 'save_post' y valores que vienen por POST con names del quick edit.
 add_action('save_post', function($post_id) {
@@ -173,7 +160,6 @@ add_action('save_post', function($post_id) {
         update_post_meta($post_id, '_arp_ubicacion_lugar', sanitize_text_field($_POST['arp_ubicacion_lugar_qe']));
     }
 }, 20, 1);
-
 // -------------------------
 // Encolar scripts admin para Quick Edit y media uploader (si quieres editar/avatar desde admin)
 // -------------------------
